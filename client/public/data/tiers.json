@@ -1,0 +1,50 @@
+{
+  "tiers": [
+    {
+      "name": "ANO",
+      "tierNumber": 1,
+      "color": "#ff7f80",
+      "elements": [
+        { "name": "Idol 1", "imageSrc": "./broda.png" },
+        { "name": "Idol 1", "imageSrc": "./broda.png" },
+        { "name": "Idol 1", "imageSrc": "./broda.png" },
+        { "name": "Idol 1", "imageSrc": "./broda.png" },
+        { "name": "Idol 1", "imageSrc": "./broda.png" },
+        { "name": "Idol 1", "imageSrc": "./broda.png" },
+        { "name": "Idol 1", "imageSrc": "./broda.png" },
+        { "name": "Idol 1", "imageSrc": "./broda.png" },
+        { "name": "Idol 2", "imageSrc": "./broda.png" }
+      ]
+    },
+    {
+      "name": "Dojebane",
+      "tierNumber": 2,
+      "color": "#ffc07f",
+      "elements": [{ "name": "Idol 3", "imageSrc": "./broda.png" }]
+    },
+    {
+      "name": "Też zajebiste",
+      "tierNumber": 3,
+      "color": "#ffdf80",
+      "elements": [{ "name": "Idol 4", "imageSrc": "./broda.png" }]
+    },
+    {
+      "name": "Ponad przeciętne",
+      "tierNumber": 4,
+      "color": "#ffff7f",
+      "elements": [{ "name": "Idol 5", "imageSrc": "./broda.png" }]
+    },
+    {
+      "name": "Taki se",
+      "tierNumber": 5,
+      "color": "#bfff7f",
+      "elements": [{ "name": "Idol 6", "imageSrc": "./broda.png" }]
+    },
+    {
+      "name": "Dla beki",
+      "tierNumber": 6,
+      "color": "#7fff7f",
+      "elements": [{ "name": "Idol 7", "imageSrc": "./broda.png" }]
+    }
+  ]
+}
