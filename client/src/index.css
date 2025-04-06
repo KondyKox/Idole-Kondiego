@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: rgb(48, 46, 46);
+  --color-secondary: rgb(226, 226, 226);
+  --color-tier-1: "#ff7f80"; /* Top Tier */
+  --color-tier-2: "#ffc07f"; /* High Tier */
+  --color-tier-3: "#ffdf80"; /* Mid Tier */
+  --color-tier-4: "#ffff7f"; /* Low Tier */
+  --color-tier-5: "#bfff7f"; /* Almost Worst Tier */
+  --color-tier-6: "#7fff7f"; /* Worst Tier */
+  --color-gradient: linear-gradient(
+    to right,
+    #ff7f80,
+    #ffc07f,
+    #ffdf80,
+    #ffff7f,
+    #bfff7f,
+    #7fff7f
+  );
+}
+
+body {
+  @apply bg-primary text-secondary;
+}
+
+.text-gradient {
+  background: var(--color-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
