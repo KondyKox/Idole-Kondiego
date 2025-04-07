@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TierNumber, TierProps } from "../types/Tier";
+import { TierElement, TierNumber, TierProps } from "../types/Tier";
 
 const tierColors: Record<TierNumber, { bg: string; hover: string }> = {
   1: { bg: "bg-tier-1", hover: "hover:bg-tier-1-hover" },
@@ -10,7 +10,14 @@ const tierColors: Record<TierNumber, { bg: string; hover: string }> = {
   6: { bg: "bg-tier-6", hover: "hover:bg-tier-6-hover" },
 };
 
-const Tier = ({ name, tierNumber, elements }: TierProps) => {
+const Tier = ({
+  name,
+  tierNumber,
+  elements,
+  setDraggedElement,
+  onDropElement,
+  setSourceTierNumber,
+}: TierProps) => {
   const { bg, hover } = tierColors[tierNumber as TierNumber] || {
     bg: "transparent",
     hover: "transparent",
@@ -28,6 +35,12 @@ const Tier = ({ name, tierNumber, elements }: TierProps) => {
     setHoveredIndex(null);
   };
 
+  // Handle drag tier element
+  const handleDragStart = (element: TierElement) => {
+    setDraggedElement(element);
+    setSourceTierNumber(tierNumber);
+  };
+
   return (
     <div className="flex justify-center items-stretch border-b text-primary">
       <h2
@@ -35,20 +48,36 @@ const Tier = ({ name, tierNumber, elements }: TierProps) => {
       >
         {name}
       </h2>
-      <div className="bg-tier-bg w-full px-2 md:px-4 py-2 flex gap-2 flex-wrap">
+      <div
+        className="bg-tier-bg w-full px-2 md:px-4 py-2 flex gap-2 flex-wrap items-stretch"
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={() => onDropElement(tierNumber)}
+      >
         {elements.map((el, index) => (
           <div
             key={index}
-            className={`p-2 rounded-lg flex flex-col justify-center items-center gap-2 cursor-pointer w-20 md:w-24 transition-colors 
-                        duration-300 ease-in-out ${bg} ${hover}`}
+            className={`p-2 rounded-lg flex flex-col justify-center items-center gap-2 cursor-pointer transition-colors 
+                        duration-300 ease-in-out ${bg} ${hover} relative group overflow-hidden`}
             style={{
               backgroundColor: hoveredIndex === index ? hover : bg, // Change bg on hover
             }}
             onMouseEnter={() => handleMouseEnter(index)}
             onMouseLeave={handleMouseLeave}
+            draggable={true}
+            onDragStart={() => handleDragStart(el)}
           >
-            {el.name}
-            <img src={el.imageSrc} alt={el.name} className="rounded-lg" />
+            <img
+              src={el.imageSrc}
+              alt={el.name}
+              className="rounded-lg w-full max-w-20"
+              draggable={false}
+            />
+            <span
+              className={`absolute bottom-0 ${bg} transition-all duration-300 ease-in-out translate-y-5
+                          group-hover:translate-y-0 w-full text-center`}
+            >
+              {el.name}
+            </span>
           </div>
         ))}
       </div>

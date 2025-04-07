@@ -1,10 +1,16 @@
+import { Dispatch, SetStateAction } from "react";
+
 export type TierProps = {
   name: string;
-  tierNumber: number;
+  tierNumber: TierNumber;
   elements: TierElement[];
+  setDraggedElement: Dispatch<SetStateAction<TierElement | null>>;
+  onDropElement: (targetTier: TierNumber) => void;
+  setSourceTierNumber: Dispatch<SetStateAction<TierNumber | null>>;
 };
 
 export type TierElement = {
+  id: string;
   name: string;
   imageSrc: string;
 };
