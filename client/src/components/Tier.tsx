@@ -14,9 +14,11 @@ const Tier = ({
   name,
   tierNumber,
   elements,
+  setClickedElement,
   setDraggedElement,
   onDropElement,
   setSourceTierNumber,
+  setIsModalOpen,
 }: TierProps) => {
   const { bg, hover } = tierColors[tierNumber as TierNumber] || {
     bg: "transparent",
@@ -41,6 +43,12 @@ const Tier = ({
     setSourceTierNumber(tierNumber);
   };
 
+  // Handle click on the element (open modal & select this element)
+  const handleClick = (el: TierElement) => {
+    setIsModalOpen(true);
+    setClickedElement(el);
+  };
+
   return (
     <div className="flex justify-center items-stretch border-b text-primary">
       <h2
@@ -57,10 +65,11 @@ const Tier = ({
           <div
             key={index}
             className={`p-2 rounded-lg flex flex-col justify-center items-center gap-2 cursor-pointer transition-colors 
-                        duration-300 ease-in-out ${bg} ${hover} relative group overflow-hidden`}
+            duration-300 ease-in-out ${bg} ${hover} relative group overflow-hidden`}
             style={{
               backgroundColor: hoveredIndex === index ? hover : bg, // Change bg on hover
             }}
+            onClick={() => handleClick(el)}
             onMouseEnter={() => handleMouseEnter(index)}
             onMouseLeave={handleMouseLeave}
             draggable={true}
@@ -74,7 +83,7 @@ const Tier = ({
             />
             <span
               className={`absolute bottom-0 ${bg} transition-all duration-300 ease-in-out translate-y-5
-                          group-hover:translate-y-0 w-full text-center`}
+              group-hover:translate-y-0 w-full text-center`}
             >
               {el.name}
             </span>

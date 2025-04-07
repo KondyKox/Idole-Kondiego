@@ -21,6 +21,8 @@
   --color-tier-5-hover: rgb(171, 225, 108);
   --color-tier-6-hover: rgb(107, 225, 107);
 
+  --color-modal-bg: rgba(48, 46, 46, 0.7);
+  --color-modal-bg-secondary: rgba(48, 46, 46, 0.8);
   --color-gradient: linear-gradient(
     to right,
     var(--color-tier-1),
@@ -41,4 +43,8 @@ body {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+.btn {
+  @apply p-2 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out border-2;
 }
