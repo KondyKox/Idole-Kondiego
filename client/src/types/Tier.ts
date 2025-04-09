@@ -13,7 +13,7 @@ export type TierProps = {
 };
 
 export type TierElement = {
-  id: string;
+  _id: string;
   name: string;
   imageSrc: string;
 };

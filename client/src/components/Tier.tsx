@@ -63,7 +63,7 @@ const Tier = ({
       >
         {elements.map((el, index) => (
           <div
-            key={index}
+            key={el._id}
             className={`p-2 rounded-lg flex flex-col justify-center items-center gap-2 cursor-pointer transition-colors 
             duration-300 ease-in-out ${bg} ${hover} relative group overflow-hidden`}
             style={{

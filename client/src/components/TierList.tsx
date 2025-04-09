@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { TierElement, TierNumber, TierProps } from "../types/Tier";
 import Tier from "./Tier";
 import Modal from "./Modal";
+import { fetchTiers } from "../services/api";
 
 const TierList = () => {
   const [tiers, setTiers] = useState<TierProps[]>([]);
@@ -16,12 +17,18 @@ const TierList = () => {
   );
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  // Fetch tiers from .json
+  // Fetch tiers from mongoDB
   useEffect(() => {
-    fetch("/data/tiers.json")
-      .then((response) => response.json())
-      .then((data) => setTiers(data.tiers))
-      .catch((error) => console.error("Error fetching tiers:", error));
+    const getData = async () => {
+      try {
+        const data = await fetchTiers();
+        setTiers(data);
+      } catch (error) {
+        console.error("Error fetching tiers:", error);
+      }
+    };
+
+    getData();
   }, []);
 
   // Drop element into new tier
@@ -36,7 +43,7 @@ const TierList = () => {
     );
     updatedTiers[sourceIndex].elements = updatedTiers[
       sourceIndex
-    ].elements.filter((el) => el.name !== draggedElement.name); // Searching by name; Replace with id when MongoDB will be added
+    ].elements.filter((el) => el._id !== draggedElement._id);
 
     // Add element to a new tier
     const targetIndex = updatedTiers.findIndex(
