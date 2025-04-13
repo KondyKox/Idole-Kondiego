@@ -1,32 +1,42 @@
 import { useState } from "react";
-import { TierElement, TierNumber, TierProps } from "../types/Tier";
+import { TierNumber, TierProps } from "../types/Tier";
+import XMark from "./XMark";
+import TierColors from "../types/TierColors";
+import Modal from "./Modal";
 
-const tierColors: Record<TierNumber, { bg: string; hover: string }> = {
-  1: { bg: "bg-tier-1", hover: "hover:bg-tier-1-hover" },
-  2: { bg: "bg-tier-2", hover: "hover:bg-tier-2-hover" },
-  3: { bg: "bg-tier-3", hover: "hover:bg-tier-3-hover" },
-  4: { bg: "bg-tier-4", hover: "hover:bg-tier-4-hover" },
-  5: { bg: "bg-tier-5", hover: "hover:bg-tier-5-hover" },
-  6: { bg: "bg-tier-6", hover: "hover:bg-tier-6-hover" },
-};
+const addIdolInputs = [
+  {
+    id: "idol_name",
+    inputType: "text",
+    labelText: "Imię idola",
+    placeholder: "Wpisz nazwę idola...",
+  },
+  {
+    id: "idol_imageSrc",
+    inputType: "file",
+    labelText: "Zdjęcie idola",
+    placeholder: "Dawaj zdjęcie idola",
+  },
+];
 
 const Tier = ({
   _id,
   name,
   tierNumber,
   elements,
-  setClickedElement,
-  setDraggedElement,
+  handleElementClick,
+  handleElementDragStart,
   onDropElement,
-  setSourceTierNumber,
-  setIsModalOpen,
 }: TierProps) => {
-  const { bg, hover } = tierColors[tierNumber as TierNumber] || {
+  const { bg, hover, text } = TierColors[tierNumber as TierNumber] || {
     bg: "transparent",
     hover: "transparent",
   };
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [succesfullAnimation, setSuccesfullAnimation] =
+    useState<boolean>(false);
 
   // Funkcja obsługująca najechanie kursora na element
   const handleMouseEnter = (index: number) => {
@@ -38,60 +48,115 @@ const Tier = ({
     setHoveredIndex(null);
   };
 
-  // Handle drag tier element
-  const handleDragStart = (element: TierElement) => {
-    setDraggedElement(element);
-    setSourceTierNumber(tierNumber);
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
   };
 
-  // Handle click on the element (open modal & select this element)
-  const handleClick = (el: TierElement) => {
-    setIsModalOpen(true);
-    setClickedElement(el);
+  // Submit add new Idol
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    setSuccesfullAnimation(true);
+    setTimeout(() => {
+      setSuccesfullAnimation(false);
+      setIsModalOpen(false);
+    }, 2000);
   };
 
   return (
-    <div className="flex justify-center items-stretch border-b text-primary">
-      <h2
-        className={`text-center font-bold min-w-1/3 max-w-1/3 lg:min-w-1/5 lg:max-w-1/5 px-2 py-4 ${bg}`}
-      >
-        {name}
-      </h2>
-      <div
-        className="bg-tier-bg w-full px-2 md:px-4 py-2 flex gap-2 flex-wrap items-stretch"
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={() => onDropElement(_id)}
-      >
-        {elements.map((el, index) => (
-          <div
-            key={el._id}
-            className={`p-2 rounded-lg flex flex-col justify-center items-center gap-2 cursor-pointer transition-colors 
+    <>
+      <div className="flex justify-center items-stretch border-b text-primary">
+        <h2
+          className={`text-center font-bold min-w-1/3 max-w-1/3 lg:min-w-1/5 lg:max-w-1/5 px-2 py-4 ${bg}`}
+        >
+          {name}
+        </h2>
+        <div
+          className="bg-tier-bg w-full px-2 md:px-4 py-2 flex gap-2 flex-wrap items-stretch"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={() => onDropElement(_id)}
+        >
+          {elements.map((el, index) => (
+            <div
+              key={el._id}
+              className={`p-2 rounded-lg flex flex-col justify-center items-center gap-2 cursor-pointer transition-colors 
             duration-300 ease-in-out ${bg} ${hover} relative group overflow-hidden`}
-            style={{
-              backgroundColor: hoveredIndex === index ? hover : bg, // Change bg on hover
-            }}
-            onClick={() => handleClick(el)}
-            onMouseEnter={() => handleMouseEnter(index)}
-            onMouseLeave={handleMouseLeave}
-            draggable={true}
-            onDragStart={() => handleDragStart(el)}
-          >
-            <img
-              src={el.imageSrc}
-              alt={el.name}
-              className="rounded-lg w-full max-w-20"
-              draggable={false}
-            />
-            <span
-              className={`absolute bottom-0 ${bg} transition-all duration-300 ease-in-out translate-y-5
-              group-hover:translate-y-0 w-full text-center`}
+              style={{
+                backgroundColor: hoveredIndex === index ? hover : bg, // Change bg on hover
+              }}
+              onClick={() => handleElementClick(el)}
+              onMouseEnter={() => handleMouseEnter(index)}
+              onMouseLeave={handleMouseLeave}
+              draggable={true}
+              onDragStart={() => handleElementDragStart(el, tierNumber)}
             >
-              {el.name}
-            </span>
+              <img
+                src={el.imageSrc}
+                alt={el.name}
+                className="rounded-lg w-full max-w-20"
+                draggable={false}
+              />
+              <span
+                className={`absolute bottom-0 ${bg} transition-all duration-300 ease-in-out translate-y-5
+              group-hover:translate-y-0 w-full text-center`}
+              >
+                {el.name}
+              </span>
+            </div>
+          ))}
+          <div
+            className={`flex justify-center items-center border-2 rounded-lg ${text} px-8 cursor-pointer transition-colors duration-300 ease-in-out 
+                      ${hover} hover:text-secondary group`}
+            onClick={() => toggleModal()}
+          >
+            <XMark className="group-hover:scale-150 transition-transform duration-300 ease-in-out" />
           </div>
-        ))}
+        </div>
       </div>
-    </div>
+
+      {isModalOpen && (
+        <Modal isOpen={isModalOpen} onClose={() => toggleModal()}>
+          <form
+            className="flex flex-col justify-center items-center p-2 gap-8 w-full lg:w-1/2"
+            onSubmit={(e) => handleSubmit(e)}
+          >
+            <h3 className="header text-gradient">Dodawanie nowego Idola</h3>
+            <div className="flex flex-col justify-center items-center w-full gap-6">
+              {addIdolInputs.map((input) => (
+                <div
+                  key={input.id}
+                  className="flex flex-col border-2 rounded-2xl w-full relative"
+                >
+                  <label
+                    htmlFor={input.id}
+                    className="absolute -top-3 left-3 bg-secondary px-2 text-xs md:text-sm text-gray-600 rounded-2xl min-w-24"
+                  >
+                    {input.labelText}
+                  </label>
+                  <input
+                    type={input.inputType}
+                    name={input.id}
+                    id={input.id}
+                    placeholder={input.placeholder}
+                    className="bg-transparent outline-none px-4 py-2 rounded-xl focus:bg-secondary focus:text-primary transition-colors duration-300 ease-in-out"
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="w-full flex flex-col justify-center items-center gap-2">
+              <button className="btn w-full font-bold">Dodaj idola</button>
+              <span
+                className={`text-green-500 opacity-0 italic text-sm ${
+                  succesfullAnimation ? "animate-floatUp" : ""
+                }`}
+              >
+                Dodano nowego Idola!
+              </span>
+            </div>
+          </form>
+        </Modal>
+      )}
+    </>
   );
 };
 

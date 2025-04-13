@@ -31,6 +31,15 @@ const TierList = () => {
     getData();
   }, []);
 
+  // Handle drag tier element
+  const handleElementDragStart = (
+    element: TierElement,
+    tierNumber: TierNumber
+  ) => {
+    setDraggedElement(element);
+    setSourceTierNumber(tierNumber);
+  };
+
   // Drop element into new tier
   const handleDropElement = async (targetTierId: string) => {
     if (!draggedElement || sourceTierNumber === null) return;
@@ -60,6 +69,12 @@ const TierList = () => {
     setSourceTierNumber(null);
   };
 
+  // Handle click on the element (open modal & select this element)
+  const handleElementClick = (el: TierElement) => {
+    setIsModalOpen(true);
+    setClickedElement(el);
+  };
+
   // Close modal
   const closeModal = () => {
     setIsModalOpen(false);
@@ -75,12 +90,9 @@ const TierList = () => {
               name={tier.name}
               tierNumber={tier.tierNumber}
               elements={tier.elements}
-              setClickedElement={setClickedElement}
-              setDraggedElement={setDraggedElement}
+              handleElementClick={handleElementClick}
+              handleElementDragStart={handleElementDragStart}
               onDropElement={handleDropElement}
-              setSourceTierNumber={setSourceTierNumber}
-              isModalOpen={isModalOpen}
-              setIsModalOpen={setIsModalOpen}
             />
           </div>
         ))}
@@ -88,9 +100,7 @@ const TierList = () => {
       {isModalOpen && clickedElement && (
         <Modal isOpen={isModalOpen} onClose={closeModal}>
           <div className="flex justify-center items-center flex-col gap-2">
-            <h3 className="font-bold text-gradient text-xl md:text-2xl lg:text-3xl text-center w-full border-b-2 border-secondary py-2 my-2">
-              {clickedElement.name}
-            </h3>
+            <h3 className="header text-gradient">{clickedElement.name}</h3>
             <img
               src={clickedElement.imageSrc}
               alt={clickedElement.name}
