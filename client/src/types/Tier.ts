@@ -1,12 +1,13 @@
 import { Dispatch, SetStateAction } from "react";
 
 export type TierProps = {
+  _id: string;
   name: string;
   tierNumber: TierNumber;
   elements: TierElement[];
   setClickedElement: Dispatch<SetStateAction<TierElement | null>>;
   setDraggedElement: Dispatch<SetStateAction<TierElement | null>>;
-  onDropElement: (targetTier: TierNumber) => void;
+  onDropElement: (targetTierId: string) => void;
   setSourceTierNumber: Dispatch<SetStateAction<TierNumber | null>>;
   isModalOpen: boolean;
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;

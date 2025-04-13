@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { TierElement, TierNumber, TierProps } from "../types/Tier";
 import Tier from "./Tier";
 import Modal from "./Modal";
-import { fetchTiers } from "../services/api";
+import { fetchTiers, moveElement } from "../services/api";
 
 const TierList = () => {
   const [tiers, setTiers] = useState<TierProps[]>([]);
@@ -32,7 +32,7 @@ const TierList = () => {
   }, []);
 
   // Drop element into new tier
-  const handleDropElement = (targetTier: TierNumber) => {
+  const handleDropElement = async (targetTierId: string) => {
     if (!draggedElement || sourceTierNumber === null) return;
 
     const updatedTiers = [...tiers]; // copy tiers
@@ -46,10 +46,14 @@ const TierList = () => {
     ].elements.filter((el) => el._id !== draggedElement._id);
 
     // Add element to a new tier
-    const targetIndex = updatedTiers.findIndex(
-      (t) => t.tierNumber === targetTier
-    );
+    const targetIndex = updatedTiers.findIndex((t) => t._id === targetTierId);
     updatedTiers[targetIndex].elements.push(draggedElement);
+
+    await moveElement(
+      draggedElement._id,
+      updatedTiers[sourceIndex]._id,
+      targetTierId
+    );
 
     setTiers(updatedTiers);
     setDraggedElement(null);
@@ -67,6 +71,7 @@ const TierList = () => {
         {tiers.map((tier) => (
           <div key={tier.tierNumber}>
             <Tier
+              _id={tier._id}
               name={tier.name}
               tierNumber={tier.tierNumber}
               elements={tier.elements}

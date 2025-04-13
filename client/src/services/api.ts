@@ -1,5 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
+// Get all tiers
 export const fetchTiers = async () => {
   const res = await fetch(`${API_URL}/tiers`);
   if (!res.ok) throw new Error("Failed to load tiers.");
@@ -8,6 +9,7 @@ export const fetchTiers = async () => {
   return data;
 };
 
+// Save tierlist
 export const saveTierList = async (data: any) => {
   const res = await fetch(`${API_URL}/tiers`, {
     method: "POST",
@@ -16,5 +18,29 @@ export const saveTierList = async (data: any) => {
   });
 
   if (!res.ok) throw new Error("Failed to save tier list.");
+  return res.json();
+};
+
+// Move element from one tier to another
+export const moveElement = async (
+  elementId: string,
+  fromTierId: string,
+  toTierId: string
+) => {
+  const res = await fetch(`${API_URL}/tiers/move-element`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      elementId: elementId,
+      fromTierId: fromTierId,
+      toTierId: toTierId,
+    }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    console.error("❌ Backend error:", errorData);
+    throw new Error("Failed to move element.");
+  }
   return res.json();
 };

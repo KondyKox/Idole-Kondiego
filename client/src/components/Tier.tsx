@@ -11,6 +11,7 @@ const tierColors: Record<TierNumber, { bg: string; hover: string }> = {
 };
 
 const Tier = ({
+  _id,
   name,
   tierNumber,
   elements,
@@ -59,7 +60,7 @@ const Tier = ({
       <div
         className="bg-tier-bg w-full px-2 md:px-4 py-2 flex gap-2 flex-wrap items-stretch"
         onDragOver={(e) => e.preventDefault()}
-        onDrop={() => onDropElement(tierNumber)}
+        onDrop={() => onDropElement(_id)}
       >
         {elements.map((el, index) => (
           <div
