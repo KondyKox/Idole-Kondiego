@@ -153,10 +153,7 @@ const Tier = ({
                   key={input.id}
                   className="flex flex-col border-2 rounded-2xl w-full relative"
                 >
-                  <label
-                    htmlFor={input.id}
-                    className="absolute -top-3 left-3 bg-secondary px-2 text-xs md:text-sm text-gray-600 rounded-2xl min-w-24"
-                  >
+                  <label htmlFor={input.id} className="label">
                     {input.labelText}
                   </label>
                   <input
@@ -171,7 +168,7 @@ const Tier = ({
                     }
                     required
                     accept={input.inputType === "file" ? "image/*" : undefined}
-                    className="bg-transparent outline-none px-4 py-2 rounded-xl focus:bg-secondary focus:text-primary transition-colors duration-300 ease-in-out"
+                    className="input"
                   />
                 </div>
               ))}
