@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { TierElement, TierNumber, TierProps } from "../types/Tier";
 import Tier from "./Tier";
 import Modal from "./Modal";
-import { fetchTiers, moveElement } from "../services/api";
+import { deleteElement, fetchTiers, moveElement } from "../services/api";
+import AnimatedText from "./AnimatedText";
 
 const TierList = () => {
   const [tiers, setTiers] = useState<TierProps[]>([]);
@@ -20,6 +21,8 @@ const TierList = () => {
     null
   );
   const [showGhost, setShowGhost] = useState<boolean>(false);
+  const [deletingSuccessful, setDeletingSuccessful] = useState<boolean>(false);
+  const [animate, setAnimate] = useState<boolean>(false);
 
   // Fetch tiers from mongoDB
   const getData = async () => {
@@ -108,6 +111,25 @@ const TierList = () => {
     setTouchPos({ x: touch.clientX, y: touch.clientY });
   };
 
+  // Handle delete element from tierlist
+  const handleDeleteElement = async (elementId: string) => {
+    try {
+      await deleteElement(elementId);
+
+      setDeletingSuccessful(true);
+    } catch (error) {
+      console.error("Cannot delete element:", error);
+      setDeletingSuccessful(false);
+    }
+
+    getData();
+    setAnimate(true);
+    setTimeout(() => {
+      setAnimate(false);
+      setIsModalOpen(false);
+    }, 2000);
+  };
+
   // Close modal
   const closeModal = () => {
     setIsModalOpen(false);
@@ -129,6 +151,7 @@ const TierList = () => {
                 onTouchMove={handleTouchMove}
                 onDrop={handleDropElement}
                 onTouchEnd={handleTouchEnd}
+                updateTiers={getData}
               />
             </div>
           ))
@@ -150,7 +173,7 @@ const TierList = () => {
             }}
           >
             <img
-              src={draggedElement.imageSrc}
+              src={`http://localhost:5000/${draggedElement.imageSrc}`}
               alt={draggedElement.name}
               className="w-full h-full object-cover rounded-lg"
             />
@@ -160,12 +183,24 @@ const TierList = () => {
 
       {isModalOpen && clickedElement && (
         <Modal isOpen={isModalOpen} onClose={closeModal}>
-          <div className="flex justify-center items-center flex-col gap-2">
+          <div className="flex justify-center items-center flex-col gap-4">
             <h3 className="header text-gradient">{clickedElement.name}</h3>
             <img
-              src={clickedElement.imageSrc}
+              src={`http://localhost:5000/${clickedElement.imageSrc}`}
               alt={clickedElement.name}
               className="rounded-2xl max-w-32 md:max-w-44 lg:max-w-64 shadow-2xl shadow-blue-500"
+            />
+            <button
+              className="btn w-full font-bold"
+              onClick={() => handleDeleteElement(clickedElement._id)}
+            >
+              Usuń
+            </button>
+            <AnimatedText
+              animate={animate}
+              isSuccessful={deletingSuccessful}
+              successfulText="Usunięto Idola!"
+              failedText="Nie można usunąć idola"
             />
           </div>
         </Modal>

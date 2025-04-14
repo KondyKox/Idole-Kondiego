@@ -1,6 +1,8 @@
 import express, { Request, Response } from "express";
 import upload from "../config/multer";
 import TierModel from "../models/Tier";
+import path from "path";
+import fs from "fs";
 
 const router = express.Router();
 
@@ -45,7 +47,7 @@ router.post(
 
       const newIdol = {
         name: idol_name,
-        imageSrc: `http://localhost:5000/${idol_image.split("/").pop()}`,
+        imageSrc: idol_image.split("/").pop(),
       };
 
       tier.elements.push(newIdol);
@@ -54,10 +56,58 @@ router.post(
       res.status(201).json({ message: "New idol added!", idol: newIdol });
     } catch (error) {
       console.error("Error adding idol:", error);
-      res.status(500).json({ message: "Error during adding new idol." });
+      res.status(500).json({ message: "Error adding new idol." });
     }
   }
 );
+
+// Delete /api/tiers/delete
+router.delete("/delete", async (req: Request, res: Response) => {
+  const { elementId } = req.body;
+  try {
+    const tiers = await TierModel.find();
+
+    for (let tier of tiers) {
+      const el = tier.elements.id(elementId);
+
+      if (el) {
+        const imagePath = path.join(__dirname, "..", el.imageSrc);
+
+        // Check if image exists
+        fs.exists(imagePath, (exists) => {
+          if (!exists) {
+            console.error("File does not exist:", imagePath);
+            res.status(404).json({ message: "Image not found for deletion." });
+            return;
+          }
+
+          // Delete image from /uploads
+          fs.unlink(imagePath, (err) => {
+            if (err) {
+              console.error("Error deleting image:", err);
+              res
+                .status(500)
+                .json({ message: "Error deleting image from server." });
+              return;
+            }
+            console.log("Image deleted successfully:", imagePath);
+          });
+        });
+
+        tier.elements.remove(el);
+        await tier.save();
+
+        res.status(201).json({ message: "Idol deleted.", idolId: elementId });
+        return;
+      }
+    }
+
+    res.status(404).json({ message: "Idol not found." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error in /delete route." });
+  }
+});
 
 // Put /api/tiers/move-element
 router.put("/move-element", async (req: Request, res: Response) => {

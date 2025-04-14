@@ -12,6 +12,7 @@ export type TierProps = {
   onTouchMove: (e: React.TouchEvent) => void;
   onDrop: (targetTierId: string) => void;
   onTouchEnd: (e: React.TouchEvent, element: TierElement) => void;
+  updateTiers: () => void;
 };
 
 export type TierElement = {

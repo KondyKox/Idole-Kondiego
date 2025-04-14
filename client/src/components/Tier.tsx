@@ -4,6 +4,7 @@ import XMark from "./XMark";
 import TierColors from "../types/TierColors";
 import Modal from "./Modal";
 import { addElementToTierlist } from "../services/api";
+import AnimatedText from "./AnimatedText";
 
 const addIdolInputs = [
   {
@@ -30,6 +31,7 @@ const Tier = ({
   onTouchMove,
   onDrop,
   onTouchEnd,
+  updateTiers,
 }: TierProps) => {
   const { bg, hover } = TierColors[tierNumber as TierNumber] || {
     bg: "transparent",
@@ -82,15 +84,18 @@ const Tier = ({
       await addElementToTierlist(formData);
 
       setAddingSuccessful(true);
+      setTimeout(() => {
+        setIsModalOpen(false);
+      }, 2000);
     } catch (error) {
       setAddingSuccessful(false);
       console.error("Error adding idol:", error);
     }
 
+    updateTiers();
     setAnimate(true);
     setTimeout(() => {
       setAnimate(false);
-      // setIsModalOpen(false);
     }, 2000);
   };
 
@@ -98,7 +103,7 @@ const Tier = ({
     <>
       <div className="flex justify-center items-stretch border-b text-primary">
         <h2
-          className={`text-center font-bold min-w-1/3 max-w-1/3 lg:min-w-1/5 lg:max-w-1/5 px-2 py-4 ${bg} relative`}
+          className={`text-center font-bold min-w-1/3 max-w-1/3 lg:min-w-1/5 lg:max-w-1/5 px-2 py-4 ${bg} relative min-h-36`}
         >
           {name}
           <div
@@ -133,7 +138,7 @@ const Tier = ({
               onTouchEnd={(e) => onTouchEnd(e, el)}
             >
               <img
-                src={el.imageSrc}
+                src={`http://localhost:5000/${el.imageSrc}`}
                 alt={el.name}
                 className="rounded-lg w-full"
                 draggable={false}
@@ -186,15 +191,12 @@ const Tier = ({
             </div>
             <div className="w-full flex flex-col justify-center items-center gap-2">
               <button className="btn w-full font-bold">Dodaj idola</button>
-              <span
-                className={`${
-                  addingSuccessful ? "text-green-500" : "text-red-500"
-                } opacity-0 italic text-sm ${animate ? "animate-floatUp" : ""}`}
-              >
-                {addingSuccessful
-                  ? "Dodano nowego Idola!"
-                  : "Nie można dodać idola :("}
-              </span>
+              <AnimatedText
+                animate={animate}
+                isSuccessful={addingSuccessful}
+                successfulText="Dodano nowego Idola!"
+                failedText="Nie można dodać idola :("
+              />
             </div>
           </form>
         </Modal>

@@ -58,3 +58,20 @@ export const moveElement = async (
   }
   return res.json();
 };
+
+// Delete element from tierlist
+export const deleteElement = async (elementId: string) => {
+  const res = await fetch(`${API_URL}/tiers/delete`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      elementId: elementId,
+    }),
+  });
+
+  if (!res.ok) throw new Error("Failed to delete element.");
+
+  const data = await res.json();
+  console.log(`Deleted idol with ID: ${elementId}`, data);
+  return data;
+};
