@@ -16,6 +16,10 @@ const TierList = () => {
     null
   );
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [touchPos, setTouchPos] = useState<{ x: number; y: number } | null>(
+    null
+  );
+  const [showGhost, setShowGhost] = useState<boolean>(false);
 
   // Fetch tiers from mongoDB
   useEffect(() => {
@@ -34,10 +38,17 @@ const TierList = () => {
   // Handle drag tier element
   const handleElementDragStart = (
     element: TierElement,
-    tierNumber: TierNumber
+    tierNumber: TierNumber,
+    e?: React.TouchEvent
   ) => {
     setDraggedElement(element);
     setSourceTierNumber(tierNumber);
+
+    if (e) {
+      const touch = e.touches[0];
+      setTouchPos({ x: touch.clientX, y: touch.clientY });
+      setShowGhost(true);
+    }
   };
 
   // Drop element into new tier
@@ -69,10 +80,33 @@ const TierList = () => {
     setSourceTierNumber(null);
   };
 
+  // Drop element on mobile
+  const handleTouchEnd = (e: React.TouchEvent, element: TierElement) => {
+    const touch = e.changedTouches[0];
+    const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+    const targetId = dropTarget
+      ?.closest("[data-drop-target]")
+      ?.getAttribute("data-drop-target");
+
+    if (targetId) {
+      setDraggedElement(element);
+      handleDropElement(targetId); // drop element
+      setShowGhost(false);
+      setTouchPos(null);
+    }
+  };
+
   // Handle click on the element (open modal & select this element)
   const handleElementClick = (el: TierElement) => {
     setIsModalOpen(true);
     setClickedElement(el);
+  };
+
+  // Move element on touch on mobile
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!showGhost) return;
+    const touch = e.touches[0];
+    setTouchPos({ x: touch.clientX, y: touch.clientY });
   };
 
   // Close modal
@@ -82,21 +116,49 @@ const TierList = () => {
 
   return (
     <>
-      <div className="w-full p-2">
-        {tiers.map((tier) => (
-          <div key={tier.tierNumber}>
-            <Tier
-              _id={tier._id}
-              name={tier.name}
-              tierNumber={tier.tierNumber}
-              elements={tier.elements}
-              handleElementClick={handleElementClick}
-              handleElementDragStart={handleElementDragStart}
-              onDropElement={handleDropElement}
+      <div className="w-full p-2 relative">
+        {tiers && tiers.length > 0 ? (
+          tiers.map((tier) => (
+            <div key={tier.tierNumber}>
+              <Tier
+                _id={tier._id}
+                name={tier.name}
+                tierNumber={tier.tierNumber}
+                elements={tier.elements}
+                onElementClick={handleElementClick}
+                onDragStart={handleElementDragStart}
+                onTouchMove={handleTouchMove}
+                onDrop={handleDropElement}
+                onTouchEnd={handleTouchEnd}
+              />
+            </div>
+          ))
+        ) : (
+          <div className="flex justify-center items-center">
+            <span className="font-bold text-2xl text-center">
+              Jeszcze nie wczytano danych... No sorry.
+            </span>
+          </div>
+        )}
+
+        {showGhost && touchPos && draggedElement && (
+          <div
+            className="pointer-events-none absolute z-50 max-w-20 rounded-lg shadow-2xl opacity-80"
+            style={{
+              top: `${touchPos.y - 100}px`,
+              left: `${touchPos.x - 100}px`,
+              // transform: "translate(-50%, -50%)",
+            }}
+          >
+            <img
+              src={draggedElement.imageSrc}
+              alt={draggedElement.name}
+              className="w-full h-full object-cover rounded-lg"
             />
           </div>
-        ))}
+        )}
       </div>
+
       {isModalOpen && clickedElement && (
         <Modal isOpen={isModalOpen} onClose={closeModal}>
           <div className="flex justify-center items-center flex-col gap-2">

@@ -3,9 +3,15 @@ export type TierProps = {
   name: string;
   tierNumber: TierNumber;
   elements: TierElement[];
-  handleElementClick: (el: TierElement) => void;
-  handleElementDragStart: (el: TierElement, tierNumber: TierNumber) => void;
-  onDropElement: (targetTierId: string) => void;
+  onElementClick: (el: TierElement) => void;
+  onDragStart: (
+    el: TierElement,
+    tierNumber: TierNumber,
+    e?: React.TouchEvent
+  ) => void;
+  onTouchMove: (e: React.TouchEvent) => void;
+  onDrop: (targetTierId: string) => void;
+  onTouchEnd: (e: React.TouchEvent, element: TierElement) => void;
 };
 
 export type TierElement = {

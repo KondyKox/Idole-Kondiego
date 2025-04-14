@@ -24,11 +24,13 @@ const Tier = ({
   name,
   tierNumber,
   elements,
-  handleElementClick,
-  handleElementDragStart,
-  onDropElement,
+  onElementClick,
+  onDragStart,
+  onTouchMove,
+  onDrop,
+  onTouchEnd,
 }: TierProps) => {
-  const { bg, hover, text } = TierColors[tierNumber as TierNumber] || {
+  const { bg, hover } = TierColors[tierNumber as TierNumber] || {
     bg: "transparent",
     hover: "transparent",
   };
@@ -67,50 +69,54 @@ const Tier = ({
     <>
       <div className="flex justify-center items-stretch border-b text-primary">
         <h2
-          className={`text-center font-bold min-w-1/3 max-w-1/3 lg:min-w-1/5 lg:max-w-1/5 px-2 py-4 ${bg}`}
+          className={`text-center font-bold min-w-1/3 max-w-1/3 lg:min-w-1/5 lg:max-w-1/5 px-2 py-4 ${bg} relative`}
         >
           {name}
+          <div
+            className={`flex justify-center items-center border-2 rounded-lg px-6 py-4 cursor-pointer transition-colors duration-300 ease-in-out 
+                      ${hover} hover:text-secondary group absolute bottom-4 left-1/2 -translate-x-1/2`}
+            onClick={() => toggleModal()}
+          >
+            <XMark className="group-hover:scale-150 transition-transform duration-300 ease-in-out rotate-45" />
+          </div>
         </h2>
         <div
           className="bg-tier-bg w-full px-2 md:px-4 py-2 flex gap-2 flex-wrap items-stretch"
           onDragOver={(e) => e.preventDefault()}
-          onDrop={() => onDropElement(_id)}
+          onDrop={() => onDrop(_id)}
+          data-drop-target={_id}
         >
           {elements.map((el, index) => (
             <div
               key={el._id}
               className={`p-2 rounded-lg flex flex-col justify-center items-center gap-2 cursor-pointer transition-colors 
-            duration-300 ease-in-out ${bg} ${hover} relative group overflow-hidden`}
+                            duration-300 ease-in-out ${bg} ${hover} relative group overflow-hidden max-w-20 touch-none select-none`}
               style={{
                 backgroundColor: hoveredIndex === index ? hover : bg, // Change bg on hover
               }}
-              onClick={() => handleElementClick(el)}
+              onClick={() => onElementClick(el)}
               onMouseEnter={() => handleMouseEnter(index)}
               onMouseLeave={handleMouseLeave}
-              draggable={true}
-              onDragStart={() => handleElementDragStart(el, tierNumber)}
+              draggable
+              onDragStart={() => onDragStart(el, tierNumber)}
+              onTouchStart={(e) => onDragStart(el, tierNumber, e)}
+              onTouchMove={(e) => onTouchMove(e)}
+              onTouchEnd={(e) => onTouchEnd(e, el)}
             >
               <img
                 src={el.imageSrc}
                 alt={el.name}
-                className="rounded-lg w-full max-w-20"
+                className="rounded-lg w-full"
                 draggable={false}
               />
               <span
                 className={`absolute bottom-0 ${bg} transition-all duration-300 ease-in-out translate-y-5
-              group-hover:translate-y-0 w-full text-center`}
+                              group-hover:translate-y-0 w-full text-center`}
               >
                 {el.name}
               </span>
             </div>
           ))}
-          <div
-            className={`flex justify-center items-center border-2 rounded-lg ${text} px-8 cursor-pointer transition-colors duration-300 ease-in-out 
-                      ${hover} hover:text-secondary group`}
-            onClick={() => toggleModal()}
-          >
-            <XMark className="group-hover:scale-150 transition-transform duration-300 ease-in-out" />
-          </div>
         </div>
       </div>
 
