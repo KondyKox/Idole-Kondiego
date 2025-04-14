@@ -5,21 +5,7 @@ import TierColors from "../types/TierColors";
 import Modal from "./Modal";
 import { addElementToTierlist } from "../services/api";
 import AnimatedText from "./AnimatedText";
-
-const addIdolInputs = [
-  {
-    id: "idol_name",
-    inputType: "text",
-    labelText: "Imię idola",
-    placeholder: "Wpisz nazwę idola...",
-  },
-  {
-    id: "idol_imageSrc",
-    inputType: "file",
-    labelText: "Zdjęcie idola",
-    placeholder: "Dawaj zdjęcie idola",
-  },
-];
+import ADD_IDOL_INPUTS from "../constants/addIdolInputs";
 
 const Tier = ({
   _id,
@@ -124,7 +110,7 @@ const Tier = ({
             <div
               key={el._id}
               className={`p-2 rounded-lg flex flex-col justify-center items-center gap-2 cursor-pointer transition-colors 
-                            duration-300 ease-in-out ${bg} ${hover} relative group overflow-hidden max-w-20 touch-none select-none`}
+                            duration-300 ease-in-out ${bg} ${hover} relative group overflow-hidden touch-none select-none`}
               style={{
                 backgroundColor: hoveredIndex === index ? hover : bg, // Change bg on hover
               }}
@@ -140,7 +126,7 @@ const Tier = ({
               <img
                 src={`http://localhost:5000/${el.imageSrc}`}
                 alt={el.name}
-                className="rounded-lg w-full"
+                className="rounded-lg w-full max-w-20"
                 draggable={false}
               />
               <span
@@ -162,7 +148,7 @@ const Tier = ({
           >
             <h3 className="header text-gradient">Dodawanie nowego Idola</h3>
             <div className="flex flex-col justify-center items-center w-full gap-6">
-              {addIdolInputs.map((input) => (
+              {ADD_IDOL_INPUTS.map((input) => (
                 <div
                   key={input.id}
                   className="flex flex-col border-2 rounded-2xl w-full relative"
@@ -179,11 +165,12 @@ const Tier = ({
                     id={input.id}
                     placeholder={input.placeholder}
                     onChange={
-                      input.id === "idol_name"
+                      input.inputType === "text"
                         ? handleNameChange
                         : handleImageChange
                     }
                     required
+                    accept={input.inputType === "file" ? "image/*" : undefined}
                     className="bg-transparent outline-none px-4 py-2 rounded-xl focus:bg-secondary focus:text-primary transition-colors duration-300 ease-in-out"
                   />
                 </div>
