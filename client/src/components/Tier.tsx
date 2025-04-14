@@ -1,8 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { TierNumber, TierProps } from "../types/Tier";
 import XMark from "./XMark";
 import TierColors from "../types/TierColors";
 import Modal from "./Modal";
+import { addElementToTierlist } from "../services/api";
 
 const addIdolInputs = [
   {
@@ -35,10 +36,12 @@ const Tier = ({
     hover: "transparent",
   };
 
+  const [newIdolName, setNewIdolName] = useState<string>("");
+  const [newIdolImage, setNewIdolImage] = useState<File | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [succesfullAnimation, setSuccesfullAnimation] =
-    useState<boolean>(false);
+  const [animate, setAnimate] = useState<boolean>(false);
+  const [addingSuccessful, setAddingSuccessful] = useState<boolean>(false);
 
   // Funkcja obsługująca najechanie kursora na element
   const handleMouseEnter = (index: number) => {
@@ -54,14 +57,40 @@ const Tier = ({
     setIsModalOpen(!isModalOpen);
   };
 
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewIdolName(e.target.value);
+  };
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) setNewIdolImage(e.target.files[0]);
+  };
+
   // Submit add new Idol
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    setSuccesfullAnimation(true);
+    if (!newIdolImage || !newIdolName) {
+      console.error("Both name and image are required!");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("tierId", _id);
+    formData.append("idol_name", newIdolName);
+    formData.append("idol_image", newIdolImage);
+
+    try {
+      await addElementToTierlist(formData);
+
+      setAddingSuccessful(true);
+    } catch (error) {
+      setAddingSuccessful(false);
+      console.error("Error adding idol:", error);
+    }
+
+    setAnimate(true);
     setTimeout(() => {
-      setSuccesfullAnimation(false);
-      setIsModalOpen(false);
+      setAnimate(false);
+      // setIsModalOpen(false);
     }, 2000);
   };
 
@@ -144,6 +173,12 @@ const Tier = ({
                     name={input.id}
                     id={input.id}
                     placeholder={input.placeholder}
+                    onChange={
+                      input.id === "idol_name"
+                        ? handleNameChange
+                        : handleImageChange
+                    }
+                    required
                     className="bg-transparent outline-none px-4 py-2 rounded-xl focus:bg-secondary focus:text-primary transition-colors duration-300 ease-in-out"
                   />
                 </div>
@@ -152,11 +187,13 @@ const Tier = ({
             <div className="w-full flex flex-col justify-center items-center gap-2">
               <button className="btn w-full font-bold">Dodaj idola</button>
               <span
-                className={`text-green-500 opacity-0 italic text-sm ${
-                  succesfullAnimation ? "animate-floatUp" : ""
-                }`}
+                className={`${
+                  addingSuccessful ? "text-green-500" : "text-red-500"
+                } opacity-0 italic text-sm ${animate ? "animate-floatUp" : ""}`}
               >
-                Dodano nowego Idola!
+                {addingSuccessful
+                  ? "Dodano nowego Idola!"
+                  : "Nie można dodać idola :("}
               </span>
             </div>
           </form>

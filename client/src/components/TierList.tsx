@@ -22,16 +22,15 @@ const TierList = () => {
   const [showGhost, setShowGhost] = useState<boolean>(false);
 
   // Fetch tiers from mongoDB
+  const getData = async () => {
+    try {
+      const data = await fetchTiers();
+      setTiers(data);
+    } catch (error) {
+      console.error("Error fetching tiers:", error);
+    }
+  };
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const data = await fetchTiers();
-        setTiers(data);
-      } catch (error) {
-        console.error("Error fetching tiers:", error);
-      }
-    };
-
     getData();
   }, []);
 

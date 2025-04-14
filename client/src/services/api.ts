@@ -21,6 +21,20 @@ export const saveTierList = async (data: any) => {
   return res.json();
 };
 
+// Add new element to tier list
+export const addElementToTierlist = async (formData: FormData) => {
+  const res = await fetch(`${API_URL}/tiers/add`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) throw new Error("Cannot add new element to tier list.");
+
+  const data = await res.json();
+  console.log("Idol added successfully", data);
+  return data;
+};
+
 // Move element from one tier to another
 export const moveElement = async (
   elementId: string,

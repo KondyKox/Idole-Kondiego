@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 .env
+
+# Uploaded files for idols
+server/uploads
