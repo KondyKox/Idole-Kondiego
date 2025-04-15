@@ -5,6 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import AnimatedText from "./AnimatedText";
 import { loginUser, registerUser } from "../api/auth";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const Auth = () => {
   const [formType, setFormType] = useState<"login" | "register">("register");
@@ -17,6 +18,7 @@ const Auth = () => {
   const [successfulText, setSuccessfulText] = useState<string>("");
   const [failedText, setFailedText] = useState<string>("");
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const toggleFormType = () => {
     formType === "register" ? setFormType("login") : setFormType("register");
@@ -94,6 +96,8 @@ const Auth = () => {
 
     animateFeedback();
   };
+
+  if (isAuthenticated) navigate("/"); // redirect user to main page when logged in
 
   return (
     <div className="flex flex-col justify-center items-center gap-4 p-4">

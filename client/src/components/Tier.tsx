@@ -6,6 +6,7 @@ import Modal from "./Modal";
 import { addElementToTierlist } from "../api/tiers";
 import AnimatedText from "./AnimatedText";
 import ADD_IDOL_INPUTS from "../constants/addIdolInputs";
+import { useAuth } from "../hooks/useAuth";
 
 const Tier = ({
   _id,
@@ -30,6 +31,7 @@ const Tier = ({
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [animate, setAnimate] = useState<boolean>(false);
   const [addingSuccessful, setAddingSuccessful] = useState<boolean>(false);
+  const { isAuthenticated } = useAuth();
 
   // Funkcja obsługująca najechanie kursora na element
   const handleMouseEnter = (index: number) => {
@@ -92,13 +94,15 @@ const Tier = ({
           className={`text-center font-bold min-w-1/3 max-w-1/3 lg:min-w-1/5 lg:max-w-1/5 px-2 py-4 ${bg} relative min-h-36`}
         >
           {name}
-          <div
-            className={`flex justify-center items-center border-2 rounded-lg px-6 py-4 cursor-pointer transition-colors duration-300 ease-in-out 
-                      ${hover} hover:text-secondary group absolute bottom-4 left-1/2 -translate-x-1/2`}
-            onClick={() => toggleModal()}
-          >
-            <XMark className="group-hover:scale-150 transition-transform duration-300 ease-in-out rotate-45" />
-          </div>
+          {isAuthenticated && (
+            <div
+              className={`flex justify-center items-center border-2 rounded-lg px-6 py-4 cursor-pointer transition-colors duration-300 ease-in-out 
+              ${hover} hover:text-secondary group absolute bottom-4 left-1/2 -translate-x-1/2`}
+              onClick={() => toggleModal()}
+            >
+              <XMark className="group-hover:scale-150 transition-transform duration-300 ease-in-out rotate-45" />
+            </div>
+          )}
         </h2>
         <div
           className="bg-tier-bg w-full px-2 md:px-4 py-2 flex gap-2 flex-wrap items-stretch"

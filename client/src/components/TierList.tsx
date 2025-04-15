@@ -4,6 +4,7 @@ import Tier from "./Tier";
 import Modal from "./Modal";
 import { deleteElement, fetchTiers, moveElement } from "../api/tiers";
 import AnimatedText from "./AnimatedText";
+import { useAuth } from "../hooks/useAuth";
 
 const TierList = () => {
   const [tiers, setTiers] = useState<TierProps[]>([]);
@@ -23,6 +24,7 @@ const TierList = () => {
   const [showGhost, setShowGhost] = useState<boolean>(false);
   const [deletingSuccessful, setDeletingSuccessful] = useState<boolean>(false);
   const [animate, setAnimate] = useState<boolean>(false);
+  const { isAuthenticated } = useAuth();
 
   // Fetch tiers from mongoDB
   const getData = async () => {
@@ -193,12 +195,14 @@ const TierList = () => {
               alt={clickedElement.name}
               className="rounded-2xl max-w-32 md:max-w-44 lg:max-w-64 shadow-2xl shadow-blue-500"
             />
-            <button
-              className="btn w-full font-bold"
-              onClick={() => handleDeleteElement(clickedElement._id)}
-            >
-              Usuń
-            </button>
+            {isAuthenticated && (
+              <button
+                className="btn w-full font-bold"
+                onClick={() => handleDeleteElement(clickedElement._id)}
+              >
+                Usuń
+              </button>
+            )}
             <AnimatedText
               animate={animate}
               isSuccessful={deletingSuccessful}

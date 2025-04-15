@@ -2,8 +2,14 @@ import express, { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import UserModel from "../models/User";
 import bckrypt from "bcryptjs";
+import { verifyToken } from "../middleware/auth";
 
 const router = express.Router();
+
+// Check user
+router.get("/check", verifyToken, (req: Request, res: Response) => {
+  res.status(200).json({ isAuthenticated: true, user: req.user });
+});
 
 // Registration
 router.post("/register", async (req: Request, res: Response) => {
