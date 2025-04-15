@@ -76,6 +76,10 @@ body {
   @apply text-secondary hover:text-primary bg-primary hover:bg-tier-6;
 }
 
+.btn-navbar {
+  @apply text-secondary hover:text-primary bg-transparent hover:bg-secondary border-transparent font-bold;
+}
+
 .btn-xmark {
   @apply bg-transparent text-red-500 hover:bg-red-500 hover:text-secondary;
 }

@@ -138,7 +138,7 @@ const TierList = () => {
   };
 
   return (
-    <>
+    <main className="flex flex-col justify-center items-center gap-2 mt-20">
       <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-bold p-4 text-gradient text-center">
         Tierlista Idoli Kondiego
       </h1>
@@ -212,7 +212,7 @@ const TierList = () => {
           </div>
         </Modal>
       )}
-    </>
+    </main>
   );
 };
 
