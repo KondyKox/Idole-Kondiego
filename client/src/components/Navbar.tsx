@@ -11,12 +11,22 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="flex justify-between items-center w-full p-4 fixed top-0 left-0 z-10 md:border-b-2 bg-transparent md:bg-primary">
+    <nav className="flex justify-between items-center w-full py-4 px-4 md:px-12 fixed top-0 left-0 z-10 md:border-b-2 bg-transparent md:bg-primary">
       {/* Logo */}
-      <div className="flex items-center gap-2"></div>
+      <div className="hidden md:flex items-center gap-2">
+        <Link
+          to={"/"}
+          className="transition-colors duration-300 ease-in-out hover:drop-shadow-blue-500"
+        >
+          <img src="/logo.svg" alt="Logo" className="w-12" />
+        </Link>
+      </div>
 
       {/* Mobile button */}
-      <button className="md:hidden btn" onClick={toggleMenu}>
+      <button
+        className="md:hidden btn absolute right-4 top-4"
+        onClick={toggleMenu}
+      >
         ☰
       </button>
 
@@ -47,7 +57,14 @@ const Navbar = () => {
         >
           <XMark />
         </button>
-        <div className="flex flex-col justify-center items-center gap-2 border-b-2 py-2">
+        <Link
+          to={"/"}
+          className="border-b-2 w-full flex justify-center items-center pb-4"
+        >
+          <img src="/logo.svg" alt="Logo" className="w-24" />
+        </Link>
+
+        <div className="flex flex-col justify-center items-center gap-2 border-b-2 pb-4 w-full">
           <Link to="/" className="text-xl btn btn-navbar" onClick={toggleMenu}>
             Idole Kondiego
           </Link>
@@ -57,7 +74,7 @@ const Navbar = () => {
           className="text-xl btn btn-navbar"
           onClick={toggleMenu}
         >
-          <User className="w-8 h-8 transition-transform duration-300 ease-in-out hover:scale-125" />
+          <User className="w-12 h-12 transition-transform duration-300 ease-in-out hover:scale-125" />
         </Link>
       </div>
     </nav>
