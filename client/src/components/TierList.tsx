@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { TierElement, TierNumber, TierProps } from "../types/Tier";
 import Tier from "./Tier";
 import Modal from "./Modal";
-import { deleteElement, fetchTiers, moveElement } from "../services/api";
+import { deleteElement, fetchTiers, moveElement } from "../api/tiers";
 import AnimatedText from "./AnimatedText";
 
 const TierList = () => {

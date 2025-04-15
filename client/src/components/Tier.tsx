@@ -3,7 +3,7 @@ import { TierNumber, TierProps } from "../types/Tier";
 import XMark from "./XMark";
 import TierColors from "../types/TierColors";
 import Modal from "./Modal";
-import { addElementToTierlist } from "../services/api";
+import { addElementToTierlist } from "../api/tiers";
 import AnimatedText from "./AnimatedText";
 import ADD_IDOL_INPUTS from "../constants/addIdolInputs";
 

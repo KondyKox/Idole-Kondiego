@@ -2,6 +2,9 @@ import { JSX, useState } from "react";
 import Login from "./Login";
 import Register from "./Register";
 import { Eye, EyeOff } from "lucide-react";
+import AnimatedText from "./AnimatedText";
+import { loginUser, registerUser } from "../api/auth";
+import { useNavigate } from "react-router-dom";
 
 const Auth = () => {
   const [formType, setFormType] = useState<"login" | "register">("register");
@@ -9,6 +12,11 @@ const Auth = () => {
   const [name, setName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [repPassword, setRepPassword] = useState<string>("");
+  const [animate, setAnimate] = useState<boolean>(false);
+  const [successful, setSuccessful] = useState<boolean>(false);
+  const [successfulText, setSuccessfulText] = useState<string>("");
+  const [failedText, setFailedText] = useState<string>("");
+  const navigate = useNavigate();
 
   const toggleFormType = () => {
     formType === "register" ? setFormType("login") : setFormType("register");
@@ -32,9 +40,59 @@ const Auth = () => {
     );
   };
 
+  // Animate feedback from form
+  const animateFeedback = () => {
+    setAnimate(true);
+    setTimeout(() => setAnimate(false), 2000);
+  };
+
   // Submit form (login or register)
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!name || !password) {
+      console.log("All fields are required!");
+      setFailedText("Wszystkie pola są wymagane!");
+      animateFeedback();
+      return;
+    }
+
+    try {
+      let token: string, user: any;
+
+      if (formType === "register") {
+        if (password !== repPassword) {
+          setFailedText("Hasła się nie zgadzają.");
+          animateFeedback();
+          return;
+        }
+
+        await registerUser(name, password);
+
+        const loginResult = await loginUser(name, password);
+        token = loginResult.token;
+        user = loginResult.user;
+
+        setSuccessfulText("Rejestracja zakończona sukcesem!");
+      } else {
+        const loginResult = await loginUser(name, password);
+        token = loginResult.token;
+        user = loginResult.user;
+
+        setSuccessfulText("Zalogowano pomyślnie!");
+      }
+
+      localStorage.setItem(import.meta.env.VITE_TOKEN_KEY, token);
+      localStorage.setItem(import.meta.env.VITE_USER_KEY, user);
+      setSuccessful(true);
+
+      setTimeout(() => navigate("/"), 2500);
+    } catch (err: any) {
+      setFailedText(err.message || "Wystąpił błąd.");
+      setSuccessful(false);
+    }
+
+    animateFeedback();
   };
 
   return (
@@ -65,6 +123,12 @@ const Auth = () => {
         <button className="btn w-full">
           {formType === "register" ? "Zarejestruj się" : "Zaloguj się"}
         </button>
+        <AnimatedText
+          animate={animate}
+          isSuccessful={successful}
+          successfulText={successfulText}
+          failedText={failedText}
+        />
       </form>
       <button
         className="btn w-full btn-secondary"

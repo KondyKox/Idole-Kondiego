@@ -3,6 +3,7 @@ import upload from "../config/multer";
 import TierModel from "../models/Tier";
 import path from "path";
 import fs from "fs";
+import { isAdmin, verifyToken } from "../middleware/auth";
 
 const router = express.Router();
 
@@ -28,6 +29,8 @@ router.get("/", async (req: Request, res: Response) => {
 // Post /api/tiers/add
 router.post(
   "/add",
+  verifyToken,
+  isAdmin,
   upload.single("idol_image"),
   async (req: Request, res: Response) => {
     try {
@@ -62,85 +65,97 @@ router.post(
 );
 
 // Delete /api/tiers/delete
-router.delete("/delete", async (req: Request, res: Response) => {
-  const { elementId } = req.body;
-  try {
-    const tiers = await TierModel.find();
+router.delete(
+  "/delete",
+  verifyToken,
+  isAdmin,
+  async (req: Request, res: Response) => {
+    const { elementId } = req.body;
+    try {
+      const tiers = await TierModel.find();
 
-    for (let tier of tiers) {
-      const el = tier.elements.id(elementId);
+      for (let tier of tiers) {
+        const el = tier.elements.id(elementId);
 
-      if (el) {
-        const imagePath = path.join(__dirname, "..", el.imageSrc);
+        if (el) {
+          const imagePath = path.join(__dirname, "..", el.imageSrc);
 
-        // Check if image exists
-        fs.exists(imagePath, (exists) => {
-          if (!exists) {
-            console.error("File does not exist:", imagePath);
-            res.status(404).json({ message: "Image not found for deletion." });
-            return;
-          }
-
-          // Delete image from /uploads
-          fs.unlink(imagePath, (err) => {
-            if (err) {
-              console.error("Error deleting image:", err);
+          // Check if image exists
+          fs.exists(imagePath, (exists) => {
+            if (!exists) {
+              console.error("File does not exist:", imagePath);
               res
-                .status(500)
-                .json({ message: "Error deleting image from server." });
+                .status(404)
+                .json({ message: "Image not found for deletion." });
               return;
             }
-            console.log("Image deleted successfully:", imagePath);
+
+            // Delete image from /uploads
+            fs.unlink(imagePath, (err) => {
+              if (err) {
+                console.error("Error deleting image:", err);
+                res
+                  .status(500)
+                  .json({ message: "Error deleting image from server." });
+                return;
+              }
+              console.log("Image deleted successfully:", imagePath);
+            });
           });
-        });
 
-        tier.elements.remove(el);
-        await tier.save();
+          tier.elements.remove(el);
+          await tier.save();
 
-        res.status(201).json({ message: "Idol deleted.", idolId: elementId });
-        return;
+          res.status(201).json({ message: "Idol deleted.", idolId: elementId });
+          return;
+        }
       }
-    }
 
-    res.status(404).json({ message: "Idol not found." });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error in /delete route." });
+      res.status(404).json({ message: "Idol not found." });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error in /delete route." });
+    }
   }
-});
+);
 
 // Put /api/tiers/move-element
-router.put("/move-element", async (req: Request, res: Response) => {
-  const { elementId, fromTierId, toTierId } = req.body;
-  try {
-    console.log("Moving element...");
+router.put(
+  "/move-element",
+  verifyToken,
+  isAdmin,
+  async (req: Request, res: Response) => {
+    const { elementId, fromTierId, toTierId } = req.body;
+    try {
+      console.log("Moving element...");
 
-    const oldTier = await TierModel.findOne({ _id: fromTierId });
-    const newTier = await TierModel.findOne({ _id: toTierId });
+      const oldTier = await TierModel.findOne({ _id: fromTierId });
+      const newTier = await TierModel.findOne({ _id: toTierId });
 
-    if (!oldTier || !newTier) {
-      res.status(404).json({ message: "Cannot find tiers." });
-      return;
+      if (!oldTier || !newTier) {
+        res.status(404).json({ message: "Cannot find tiers." });
+        return;
+      }
+
+      const element = oldTier.elements.id(elementId);
+      if (!element) {
+        res.status(404).json({ message: "Cannot find element." });
+        return;
+      }
+
+      oldTier.elements.remove(element);
+      newTier.elements.push(element);
+
+      await oldTier.save();
+      await newTier.save();
+
+      console.log("Tiers saved!");
+      res.json({ message: "Element moved." });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error in /move-element route." });
     }
-
-    const element = oldTier.elements.id(elementId);
-    if (!element) {
-      res.status(404).json({ message: "Cannot find element." });
-      return;
-    }
-
-    oldTier.elements.remove(element);
-    newTier.elements.push(element);
-
-    await oldTier.save();
-    await newTier.save();
-
-    console.log("Tiers saved!");
-    res.json({ message: "Element moved." });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error in /move-element route." });
   }
-});
+);
 
 export default router;
