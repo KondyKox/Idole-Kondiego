@@ -1,4 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const TOKEN_KEY = import.meta.env.VITE_TOKEN_KEY;
 
 // Get all tiers
 export const fetchTiers = async () => {
@@ -23,8 +24,10 @@ export const saveTierList = async (data: any) => {
 
 // Add new element to tier list
 export const addElementToTierlist = async (formData: FormData) => {
+  const token = localStorage.getItem(TOKEN_KEY);
   const res = await fetch(`${API_URL}/tiers/add`, {
     method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
     body: formData,
   });
 
@@ -41,9 +44,13 @@ export const moveElement = async (
   fromTierId: string,
   toTierId: string
 ) => {
+  const token = localStorage.getItem(TOKEN_KEY);
   const res = await fetch(`${API_URL}/tiers/move-element`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify({
       elementId: elementId,
       fromTierId: fromTierId,
@@ -61,9 +68,13 @@ export const moveElement = async (
 
 // Delete element from tierlist
 export const deleteElement = async (elementId: string) => {
+  const token = localStorage.getItem(TOKEN_KEY);
   const res = await fetch(`${API_URL}/tiers/delete`, {
     method: "DELETE",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify({
       elementId: elementId,
     }),

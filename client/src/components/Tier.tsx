@@ -31,7 +31,7 @@ const Tier = ({
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [animate, setAnimate] = useState<boolean>(false);
   const [addingSuccessful, setAddingSuccessful] = useState<boolean>(false);
-  const { isAuthenticated } = useAuth();
+  const { isAdmin } = useAuth();
 
   // Funkcja obsługująca najechanie kursora na element
   const handleMouseEnter = (index: number) => {
@@ -94,7 +94,7 @@ const Tier = ({
           className={`text-center font-bold min-w-1/3 max-w-1/3 lg:min-w-1/5 lg:max-w-1/5 px-2 py-4 ${bg} relative min-h-36`}
         >
           {name}
-          {isAuthenticated && (
+          {isAdmin && (
             <div
               className={`flex justify-center items-center border-2 rounded-lg px-6 py-4 cursor-pointer transition-colors duration-300 ease-in-out 
               ${hover} hover:text-secondary group absolute bottom-4 left-1/2 -translate-x-1/2`}
