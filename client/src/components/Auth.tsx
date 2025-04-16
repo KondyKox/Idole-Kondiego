@@ -100,9 +100,9 @@ const Auth = () => {
   if (isAuthenticated) navigate("/"); // redirect user to main page when logged in
 
   return (
-    <div className="flex flex-col justify-center items-center gap-4 p-4">
+    <div className="flex flex-col justify-center items-center gap-4 p-4 mt-22">
       <form
-        className="flex flex-col justify-center items-center gap-8 w-full py-2 px-4 md:py-12 md:px-16 border-2 rounded-2xl"
+        className="flex flex-col justify-center items-center gap-8 w-full py-2 px-4 md:py-12 md:px-16 lg:px-28 border-2 rounded-2xl"
         onSubmit={(e) => handleSubmit(e)}
       >
         <h2 className="header text-gradient">
