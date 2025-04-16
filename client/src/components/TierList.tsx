@@ -29,8 +29,10 @@ const TierList = () => {
   // Fetch tiers from mongoDB
   const getData = async () => {
     try {
-      const data = await fetchTiers();
-      setTiers(data);
+      const data: TierProps[] = await fetchTiers();
+      const sortedData = data.sort((a, b) => a.tierNumber - b.tierNumber);
+
+      setTiers(sortedData);
     } catch (error) {
       console.error("Error fetching tiers:", error);
     }
