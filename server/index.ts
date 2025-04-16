@@ -10,7 +10,7 @@ dotenv.config();
 connectDB();
 
 const allowedOrigins = [
-  "https://idole-kondiego.vercel.app",
+  "https://idolekondiego.vercel.app",
   "http://localhost:5173",
 ]; // cors origins
 
