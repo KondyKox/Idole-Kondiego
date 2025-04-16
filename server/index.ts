@@ -9,8 +9,13 @@ import path from "path";
 dotenv.config();
 connectDB();
 
+const allowedOrigins = [
+  "https://idole-kondiego.vercel.app",
+  "http://localhost:5173",
+]; // cors origins
+
 const app = express();
-app.use(cors());
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
