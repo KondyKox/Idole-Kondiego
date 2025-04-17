@@ -1,9 +1,7 @@
 import express, { Request, Response } from "express";
-import upload from "../config/multer";
 import TierModel from "../models/Tier";
-import path from "path";
-import fs from "fs";
 import { isAdmin, verifyToken } from "../middleware/auth";
+import { cloudinary, upload } from "../config/cloudinary";
 
 const router = express.Router();
 
@@ -35,7 +33,7 @@ router.post(
   async (req: Request, res: Response) => {
     try {
       const { tierId, idol_name } = req.body;
-      const idol_image = req.file ? req.file.path : null;
+      const idol_image = req.file ? req.file : null;
 
       if (!idol_name || !idol_image) {
         res.status(400).json({ message: "Both name & image are required!" });
@@ -48,9 +46,14 @@ router.post(
         return;
       }
 
+      const result = await cloudinary.uploader.upload(idol_image.path, {
+        folder: "kondy_idols",
+      });
+
       const newIdol = {
         name: idol_name,
-        imageSrc: idol_image.split("/").pop(),
+        imageSrc: result.secure_url,
+        imageId: result.public_id,
       };
 
       tier.elements.push(newIdol);
@@ -78,30 +81,8 @@ router.delete(
         const el = tier.elements.id(elementId);
 
         if (el) {
-          const imagePath = path.join(__dirname, "..", el.imageSrc);
-
-          // Check if image exists
-          fs.exists(imagePath, (exists) => {
-            if (!exists) {
-              console.error("File does not exist:", imagePath);
-              res
-                .status(404)
-                .json({ message: "Image not found for deletion." });
-              return;
-            }
-
-            // Delete image from /uploads
-            fs.unlink(imagePath, (err) => {
-              if (err) {
-                console.error("Error deleting image:", err);
-                res
-                  .status(500)
-                  .json({ message: "Error deleting image from server." });
-                return;
-              }
-              console.log("Image deleted successfully:", imagePath);
-            });
-          });
+          await cloudinary.uploader.destroy(el.imageId);
+          console.log("Image deleted from Cloudinary:", el.imageId);
 
           tier.elements.remove(el);
           await tier.save();

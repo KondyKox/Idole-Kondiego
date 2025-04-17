@@ -4,7 +4,6 @@ import cors from "cors";
 import connectDB from "./config/db";
 import tiersRoute from "./routes/tiers";
 import authRoute from "./routes/auth";
-import path from "path";
 
 dotenv.config();
 connectDB();
@@ -19,7 +18,7 @@ app.use(cors({ origin: allowedOrigins }));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/tiers", tiersRoute);
 app.use("/api/auth", authRoute);
 
