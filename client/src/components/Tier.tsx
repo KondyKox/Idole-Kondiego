@@ -134,7 +134,7 @@ const Tier = ({
                 draggable={false}
               />
               <span
-                className={`absolute bottom-0 ${bg} transition-all duration-300 ease-in-out translate-y-5
+                className={`absolute bottom-0 ${bg} transition-all duration-300 ease-in-out translate-y-20
                               group-hover:translate-y-0 w-full text-center`}
               >
                 {el.name}
