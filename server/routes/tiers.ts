@@ -46,14 +46,10 @@ router.post(
         return;
       }
 
-      const result = await cloudinary.uploader.upload(idol_image.path, {
-        folder: "kondy_idols",
-      });
-
       const newIdol = {
         name: idol_name,
-        imageSrc: result.secure_url,
-        imageId: result.public_id,
+        imageSrc: idol_image.path,
+        imageId: idol_image.filename,
       };
 
       tier.elements.push(newIdol);

@@ -128,7 +128,7 @@ const Tier = ({
               onTouchEnd={(e) => onTouchEnd(e, el)}
             >
               <img
-                src={`http://localhost:5000/${el.imageSrc}`}
+                src={el.imageSrc}
                 alt={el.name}
                 className="rounded-lg w-full max-w-20"
                 draggable={false}

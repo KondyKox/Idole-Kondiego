@@ -188,7 +188,7 @@ const TierList = () => {
             }}
           >
             <img
-              src={`http://localhost:5000/${draggedElement.imageSrc}`}
+              src={draggedElement.imageSrc}
               alt={draggedElement.name}
               className="w-full h-full object-cover rounded-lg"
             />
@@ -201,7 +201,7 @@ const TierList = () => {
           <div className="flex justify-center items-center flex-col gap-4">
             <h3 className="header text-gradient">{clickedElement.name}</h3>
             <img
-              src={`http://localhost:5000/${clickedElement.imageSrc}`}
+              src={clickedElement.imageSrc}
               alt={clickedElement.name}
               className="rounded-2xl max-w-32 md:max-w-44 lg:max-w-64 shadow-2xl shadow-blue-500"
             />

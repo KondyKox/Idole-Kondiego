@@ -15,7 +15,9 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: async () => ({
     folder: "kondy_idols",
-    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    use_filename: true,
+    unique_filename: false,
+    resource_type: "image",
   }),
 });
 
