@@ -4,6 +4,7 @@ import cors from "cors";
 import connectDB from "./config/db";
 import tiersRoute from "./routes/tiers";
 import authRoute from "./routes/auth";
+import pingRoute from "./routes/ping";
 
 dotenv.config();
 connectDB();
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 // app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/tiers", tiersRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/ping", pingRoute);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server works on http://localhost:${PORT}`));
