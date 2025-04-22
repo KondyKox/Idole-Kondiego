@@ -163,10 +163,18 @@ const TierList = () => {
             </div>
           ))
         ) : (
-          <div className="flex justify-center items-center">
-            <span className="font-bold text-2xl text-center">
-              Jeszcze nie wczytano danych... No sorry.
-            </span>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+            <div className="flex gap-1">
+              {"Wczytuję idoli...".split("").map((letter, i) => (
+                <span
+                  key={i}
+                  className="text-white text-xl font-bold animate-bounce"
+                  style={{ animationDelay: `${i * 0.05}s` }}
+                >
+                  {letter}
+                </span>
+              ))}
+            </div>
           </div>
         )}
 
