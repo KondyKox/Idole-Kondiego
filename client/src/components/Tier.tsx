@@ -130,7 +130,7 @@ const Tier = ({
               <img
                 src={el.imageSrc}
                 alt={el.name}
-                className="rounded-lg w-full max-w-20"
+                className="rounded-lg w-full max-w-28 max-h-26"
                 draggable={false}
               />
               <span

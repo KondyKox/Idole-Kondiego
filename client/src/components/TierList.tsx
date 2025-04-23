@@ -203,7 +203,7 @@ const TierList = () => {
             <img
               src={clickedElement.imageSrc}
               alt={clickedElement.name}
-              className="rounded-2xl max-w-32 md:max-w-44 lg:max-w-64 shadow-2xl shadow-blue-500"
+              className="rounded-2xl max-w-32 max-h-52 md:max-h-72 md:max-w-44 lg:max-w-64 shadow-2xl shadow-blue-500"
             />
             {isAdmin && (
               <button
